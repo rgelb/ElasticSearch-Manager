@@ -15,6 +15,8 @@ AppID=ElasticSearchManager.1
 Source: "..\bin\release\ElasticSearchManager.exe"; DestDir: "{app}"
 Source: "CleanFiles\ElasticSearchManager.exe.config"; DestDir: "{app}"
 Source: "..\bin\release\ScintillaNET.dll"; DestDir: "{app}"
+Source: "..\bin\release\Elasticsearch.Net.dll"; DestDir: "{app}"
+Source: "..\bin\release\Nest.dll"; DestDir: "{app}"
 
 [Icons]
 Name: "{userstartup}\Elastic Search Manager"; Filename: "{app}\ElasticSearchManager.exe"; 
