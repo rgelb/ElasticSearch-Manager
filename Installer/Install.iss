@@ -19,7 +19,7 @@ Source: "..\bin\release\Elasticsearch.Net.dll"; DestDir: "{app}"
 Source: "..\bin\release\Nest.dll"; DestDir: "{app}"
 
 [Icons]
-Name: "{userstartup}\Elastic Search Manager"; Filename: "{app}\ElasticSearchManager.exe"; 
+Name: "{group}\Elastic Search Manager"; Filename: "{app}\ElasticSearchManager.exe"; 
 
 [Run]
 Filename: "{app}\ElasticSearchManager.exe"; Description: "Launch Elastic Search Manager"; Flags: postinstall nowait skipifsilent
