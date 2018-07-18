@@ -63,15 +63,13 @@ namespace ElasticSearchManager {
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.appSplitContainer);
-            this.toolStripContainer1.ContentPanel.Margin = new System.Windows.Forms.Padding(2);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1213, 555);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1820, 872);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.LeftToolStripPanelVisible = false;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
-            this.toolStripContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.toolStripContainer1.Name = "toolStripContainer1";
             this.toolStripContainer1.RightToolStripPanelVisible = false;
-            this.toolStripContainer1.Size = new System.Drawing.Size(1213, 608);
+            this.toolStripContainer1.Size = new System.Drawing.Size(1820, 935);
             this.toolStripContainer1.TabIndex = 1;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -87,20 +85,19 @@ namespace ElasticSearchManager {
             this.lblAppStatus});
             this.appStatusBar.Location = new System.Drawing.Point(0, 0);
             this.appStatusBar.Name = "appStatusBar";
-            this.appStatusBar.Size = new System.Drawing.Size(1213, 22);
+            this.appStatusBar.Size = new System.Drawing.Size(1820, 30);
             this.appStatusBar.TabIndex = 0;
             // 
             // lblAppStatus
             // 
             this.lblAppStatus.Name = "lblAppStatus";
-            this.lblAppStatus.Size = new System.Drawing.Size(26, 17);
+            this.lblAppStatus.Size = new System.Drawing.Size(41, 25);
             this.lblAppStatus.Text = "Idle";
             // 
             // appSplitContainer
             // 
             this.appSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.appSplitContainer.Location = new System.Drawing.Point(0, 0);
-            this.appSplitContainer.Margin = new System.Windows.Forms.Padding(2);
             this.appSplitContainer.Name = "appSplitContainer";
             // 
             // appSplitContainer.Panel1
@@ -110,9 +107,8 @@ namespace ElasticSearchManager {
             // appSplitContainer.Panel2
             // 
             this.appSplitContainer.Panel2.Controls.Add(this.grdEntities);
-            this.appSplitContainer.Size = new System.Drawing.Size(1213, 555);
-            this.appSplitContainer.SplitterDistance = 331;
-            this.appSplitContainer.SplitterWidth = 3;
+            this.appSplitContainer.Size = new System.Drawing.Size(1820, 872);
+            this.appSplitContainer.SplitterDistance = 496;
             this.appSplitContainer.TabIndex = 0;
             // 
             // treeEntities
@@ -120,9 +116,8 @@ namespace ElasticSearchManager {
             this.treeEntities.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeEntities.HideSelection = false;
             this.treeEntities.Location = new System.Drawing.Point(0, 0);
-            this.treeEntities.Margin = new System.Windows.Forms.Padding(2);
             this.treeEntities.Name = "treeEntities";
-            this.treeEntities.Size = new System.Drawing.Size(331, 555);
+            this.treeEntities.Size = new System.Drawing.Size(496, 872);
             this.treeEntities.TabIndex = 0;
             this.treeEntities.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeIndexes_AfterSelect);
             // 
@@ -134,10 +129,11 @@ namespace ElasticSearchManager {
             this.grdEntities.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grdEntities.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.grdEntities.Location = new System.Drawing.Point(0, 0);
+            this.grdEntities.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.grdEntities.Name = "grdEntities";
             this.grdEntities.ReadOnly = true;
             this.grdEntities.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grdEntities.Size = new System.Drawing.Size(879, 555);
+            this.grdEntities.Size = new System.Drawing.Size(1320, 872);
             this.grdEntities.TabIndex = 0;
             // 
             // appToolbar
@@ -156,51 +152,51 @@ namespace ElasticSearchManager {
             this.lbl});
             this.appToolbar.Location = new System.Drawing.Point(3, 0);
             this.appToolbar.Name = "appToolbar";
-            this.appToolbar.Size = new System.Drawing.Size(492, 31);
+            this.appToolbar.Size = new System.Drawing.Size(615, 33);
             this.appToolbar.TabIndex = 0;
             // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(74, 28);
+            this.toolStripLabel1.Size = new System.Drawing.Size(110, 30);
             this.toolStripLabel1.Text = "Connections";
             // 
             // cboConnections
             // 
             this.cboConnections.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboConnections.Name = "cboConnections";
-            this.cboConnections.Size = new System.Drawing.Size(121, 31);
+            this.cboConnections.Size = new System.Drawing.Size(121, 33);
             this.cboConnections.SelectedIndexChanged += new System.EventHandler(this.cboConnections_SelectedIndexChanged);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 33);
             // 
             // btnDelete
             // 
             this.btnDelete.Image = global::ElasticSearchManager.Properties.Resources.if_58_Cross_Circle_Remove_Delete_1864217;
             this.btnDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(77, 28);
+            this.btnDelete.Size = new System.Drawing.Size(102, 30);
             this.btnDelete.Text = "Delete...";
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 33);
             // 
             // toolStripLabel2
             // 
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(33, 28);
+            this.toolStripLabel2.Size = new System.Drawing.Size(50, 30);
             this.toolStripLabel2.Text = "Filter";
             // 
             // txtToolbarSearch
             // 
             this.txtToolbarSearch.Name = "txtToolbarSearch";
-            this.txtToolbarSearch.Size = new System.Drawing.Size(100, 31);
+            this.txtToolbarSearch.Size = new System.Drawing.Size(130, 33);
             this.txtToolbarSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtToolbarSearch_KeyDown);
             // 
             // btnToolbarSearch
@@ -209,23 +205,22 @@ namespace ElasticSearchManager {
             this.btnToolbarSearch.Image = global::ElasticSearchManager.Properties.Resources.if_icon_111_search_314689;
             this.btnToolbarSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnToolbarSearch.Name = "btnToolbarSearch";
-            this.btnToolbarSearch.Size = new System.Drawing.Size(28, 28);
+            this.btnToolbarSearch.Size = new System.Drawing.Size(28, 30);
             this.btnToolbarSearch.ToolTipText = "Search Layouts";
             this.btnToolbarSearch.Click += new System.EventHandler(this.btnToolbarSearch_Click);
             // 
             // lbl
             // 
             this.lbl.Name = "lbl";
-            this.lbl.Size = new System.Drawing.Size(0, 28);
+            this.lbl.Size = new System.Drawing.Size(0, 30);
             // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1213, 608);
+            this.ClientSize = new System.Drawing.Size(1820, 935);
             this.Controls.Add(this.toolStripContainer1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "frmMain";
             this.Text = "Elastic Search Manager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);

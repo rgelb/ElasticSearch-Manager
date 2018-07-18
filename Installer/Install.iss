@@ -8,7 +8,7 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
 UninstallDisplayIcon={app}\ElasticSearchManager.exe
-OutputBaseFilename=ElasticSearchManager
+OutputBaseFilename=ElasticSearchManagerSetup
 AppID=ElasticSearchManager.1
 
 [Files]
