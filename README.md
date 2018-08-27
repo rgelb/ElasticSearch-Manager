@@ -1,5 +1,5 @@
-# Elastic-Search-Manager
-Elastic Search Manager (work in progress)
+# ElasticSearch-Manager
+ElasticSearch Manager (work in progress)
 
 * Lists aliases/indexes + details
 * Filters aliases/indexes
