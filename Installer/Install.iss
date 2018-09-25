@@ -13,11 +13,11 @@ AppID=ElasticSearchManager.1
 VersionInfoVersion=0.4
 
 [Files]
-Source: "..\bin\release\ElasticSearchManager.exe"; DestDir: "{app}"
+Source: "..\bin\debug\ElasticSearchManager.exe"; DestDir: "{app}"
 Source: "CleanFiles\ElasticSearchManager.exe.config"; DestDir: "{app}"
-Source: "..\bin\release\ScintillaNET.dll"; DestDir: "{app}"
-Source: "..\bin\release\Elasticsearch.Net.dll"; DestDir: "{app}"
-Source: "..\bin\release\Nest.dll"; DestDir: "{app}"
+Source: "..\bin\debug\ScintillaNET.dll"; DestDir: "{app}"
+Source: "..\bin\debug\Elasticsearch.Net.dll"; DestDir: "{app}"
+Source: "..\bin\debug\Nest.dll"; DestDir: "{app}"
 
 [Icons]
 Name: "{group}\Elastic Search Manager"; Filename: "{app}\ElasticSearchManager.exe"; 
