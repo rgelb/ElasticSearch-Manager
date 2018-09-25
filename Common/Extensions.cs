@@ -16,5 +16,19 @@ namespace ElasticSearchManager.Common {
                 .Concat(coll.Cast<TreeNode>()
                     .SelectMany(x => FlattenTree(x.Nodes)));
         }
+
+        public static TreeNode FindByFullPath(this TreeNodeCollection tncoll, string fullPath) {
+            TreeNode tnFound;
+            foreach (TreeNode tnCurr in tncoll) {
+                if (tnCurr.FullPath == fullPath) {
+                    return tnCurr;
+                }
+                tnFound = tnCurr.Nodes.FindByFullPath(fullPath);
+                if (tnFound != null) {
+                    return tnFound;
+                }
+            }
+            return null;
+        }
     }
 }

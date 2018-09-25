@@ -22,8 +22,17 @@ namespace ElasticSearchManager {
         private enum EntityType {
             Index,
             Alias,
-            Unknown
+            Unknown,
+            NotSelected
         }
+
+        private enum ContentType {
+            Grid,
+            TextEditor,
+            SplitTextEditor
+        }
+
+        private TextEditor textEditor;
         #endregion
 
         #region Constructors
@@ -39,7 +48,9 @@ namespace ElasticSearchManager {
         private void frmMain_Load(object sender, EventArgs e) {
             PopulateConnections();
             InitializeUserSettings();
-            InitilizeMiscUI();            
+            InitializeTextEditor();
+            InitilizeMiscUI();    
+            DisplayContentControl(ContentType.Grid);
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e) {
@@ -57,6 +68,15 @@ namespace ElasticSearchManager {
         #endregion
 
         #region Private Methods
+
+
+        private void InitializeTextEditor() {
+            var txtContent = new Scintilla();
+            appSplitContainer.Panel2.Controls.Add(txtContent);
+            txtContent.Dock = DockStyle.None;
+
+            textEditor = new TextEditor(txtContent);
+        }
 
         private void InitilizeMiscUI() {
             NativeMethods.SetToolstripTextBoxPlaceHolder(txtToolbarSearch, "Filter Entities");            
@@ -84,7 +104,10 @@ namespace ElasticSearchManager {
         #endregion
 
         private void cboConnections_SelectedIndexChanged(object sender, EventArgs e) {
+            PopulateConnectionEntities();
+        }
 
+        private void PopulateConnectionEntities() {
             using (var access = GetElasticAccess()) {
                 ClearTree();
 
@@ -114,6 +137,7 @@ namespace ElasticSearchManager {
             foreach (var record in records) {
                 var node = parentNode.Nodes.Add(record.Index);
                 node.Text = $"{record.Index} ({record.DocsCount})";
+                node.Tag = record;
 
                 if (record.Health != "green") {
                     node.ForeColor = Color.FromName(record.Health);
@@ -130,20 +154,106 @@ namespace ElasticSearchManager {
             foreach (var alias in aliases) {
                 var node = parentNode.Nodes.Add(alias.Alias);
                 node.Text = $"{alias.Alias} ({alias.Index})";
+                node.Tag = alias;
             }
         }
 
         private void treeIndexes_AfterSelect(object sender, TreeViewEventArgs e) {
             TreeNode node = treeEntities.SelectedNode;
 
-            grdEntities.AutoGenerateColumns = true;
-            grdEntities.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            try {
+                Cursor.Current = Cursors.WaitCursor;
 
-            PopulateGrid();
-            
+                if (node.Level == 0) {
+                    // list of indexes or aliases
+                    PopulateGrid();
+                    DisplayContentControl(ContentType.Grid);
+                }
+                else if (node.Level == 1) {
+                    // index/alias info
+                    PopulateEntityInformation();
+                    DisplayContentControl(ContentType.TextEditor);
+                }
+            }
+            finally {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void PopulateEntityInformation() {
+            switch (GetEntityType()) {
+                case EntityType.Index:
+                    var indexRecord = (CatIndicesRecord) treeEntities.SelectedNode.Tag;
+
+                    using (var access = GetElasticAccess()) {
+                        var indexDescription = access.IndexDescription(indexRecord.Index);
+                        PopulateIndexDescription(indexDescription);
+                    }
+
+                    break;
+                case EntityType.Alias:
+                    var aliasRecord = (CatAliasesRecord) treeEntities.SelectedNode.Tag;
+                    break;
+                case EntityType.Unknown:
+                    MessageBox.Show("Select either Indexes or Aliases on the left");
+                    break;
+                case EntityType.NotSelected:
+                    return;
+            }            
+        }
+
+        private void PopulateIndexDescription(ElasticAccess.IndexDefinition indexDef) {
+            string description = string.Empty;
+
+
+            //if (indexDef.Index.Indices.Count == 0) {
+            //    textEditor.Editor.Text = "Index not found";
+            //    return;
+            //}
+
+            //var index = indexDef.Indices.FirstOrDefault();
+            //var indexState = index.Value;
+
+
+            // get names and aliases
+            if (indexDef.Index != null) {
+                var index = indexDef.Index.Indices.FirstOrDefault();
+                var indexState = index.Value;
+
+                description = index.Key + Environment.NewLine + Environment.NewLine;
+
+                if (indexState.Aliases.Count > 0)
+                    description += "Aliased by: " + indexState.Aliases.First().Key.Name + Environment.NewLine + Environment.NewLine;
+
+            }
+
+            // settings
+            if (indexDef.Settings != null) {
+                description += "Replicas: " + indexDef.Settings.NumberOfReplicas + Environment.NewLine;
+                description += "Shards: " + indexDef.Settings.NumberOfShards + Environment.NewLine;
+            }
+
+            // fields
+            string fields = string.Empty;
+            if (indexDef.Mappings != null) {
+
+                foreach (var field in indexDef.Mappings.Values.First().Properties) {
+                    fields += $"{field.Value.Name.Name}, {field.Value.Type}{Environment.NewLine}";
+                    Debug.WriteLine(field.Value.Name);
+                }
+
+                description += Environment.NewLine + "Fields" + Environment.NewLine;
+                description += fields + Environment.NewLine;
+            }
+
+            textEditor.Editor.Text = description;
         }
 
         private void PopulateGrid() {
+
+            grdEntities.AutoGenerateColumns = true;
+            grdEntities.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
             switch (GetEntityType()) {
                 case EntityType.Index:
                     PopulateIndexGrid();
@@ -154,8 +264,38 @@ namespace ElasticSearchManager {
                 case EntityType.Unknown:
                     MessageBox.Show("Select either Indexes or Aliases on the left");
                     break;
+                case EntityType.NotSelected:
+                    return;
             }
         }
+
+        private void DisplayContentControl(ContentType contentType) {
+
+            // hide other things
+            textEditor.Editor.Dock = DockStyle.None;
+            textEditor.Editor.Visible = false;
+            
+            grdEntities.Dock = DockStyle.None;
+            grdEntities.Visible = false;
+
+            switch (contentType) {
+                case ContentType.Grid:
+                    grdEntities.Dock = DockStyle.Fill;
+                    grdEntities.Visible = true;
+                    break;
+                case ContentType.TextEditor:
+                    textEditor.Editor.Dock = DockStyle.Fill;
+                    textEditor.Editor.Visible = true;
+                    break;
+                case ContentType.SplitTextEditor:
+                    break;
+                default:
+                    MessageBox.Show($"Invalid content type: {contentType}");
+                    break;
+            }
+        }
+
+
 
         private void PopulateIndexGrid() {
             TreeNode node = treeEntities.SelectedNode;
@@ -214,19 +354,67 @@ namespace ElasticSearchManager {
         }
 
         private EntityType GetEntityType() {
+            // returns Index or Alias regardless of whether it's 1st level entry or 2nd level entry
             EntityType entityType = EntityType.Unknown;
 
-            if (treeEntities.SelectedNode.Text == "Indexes") {
-                entityType = EntityType.Index;
-            } else if (treeEntities.SelectedNode.Text == "Aliases") {
-                entityType = EntityType.Alias;
+            if (treeEntities.SelectedNode == null) {
+                return EntityType.NotSelected;
             }
+
+            if (treeEntities.SelectedNode.Level == 0) {
+                if (treeEntities.SelectedNode.Text == "Indexes") {
+                    entityType = EntityType.Index;
+                } else if (treeEntities.SelectedNode.Text == "Aliases") {
+                    entityType = EntityType.Alias;
+                }
+            } else if (treeEntities.SelectedNode.Level == 1) {
+                object o = treeEntities.SelectedNode.Tag;
+                if (o is CatIndicesRecord) {
+                    return EntityType.Index;
+                } else if (o is CatAliasesRecord) {
+                    return EntityType.Alias;
+                }
+            }
+
+
 
             return entityType;
         }
 
+
+
         private void btnToolbarSearch_Click(object sender, EventArgs e) {
             PopulateGrid();
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e) {
+            RefreshSidebar();
+        }
+
+        private void RefreshSidebar() {
+            try {
+                Cursor.Current = Cursors.WaitCursor;
+
+                if (cboConnections.SelectedIndex > -1 && treeEntities.SelectedNode != null) {
+
+                    // save the current node of the tree
+                    var nodePath = treeEntities.SelectedNode.FullPath;
+
+                    PopulateConnectionEntities();
+
+                    // set the tree to the same node
+                    TreeNode foundNode = treeEntities.Nodes.FindByFullPath(nodePath);
+
+                    if (foundNode != null) {
+                        treeEntities.SelectedNode = foundNode;
+                    }
+                }
+            }
+            finally {
+                // Set cursor as default arrow
+                Cursor.Current = Cursors.Default;
+            }
+
         }
     }
 }

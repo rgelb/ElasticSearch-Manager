@@ -40,10 +40,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Elasticsearch.Net, Version=6.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>packages\Elasticsearch.Net.6.2.0\lib\net46\Elasticsearch.Net.dll</HintPath>
+      <HintPath>packages\Elasticsearch.Net.6.3.1\lib\net461\Elasticsearch.Net.dll</HintPath>
     </Reference>
     <Reference Include="Nest, Version=6.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>packages\NEST.6.2.0\lib\net46\Nest.dll</HintPath>
+      <HintPath>packages\NEST.6.3.1\lib\net461\Nest.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
@@ -113,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\if_TruckYellow_22999.ico" />
+    <None Include="Resources\Refresh1.png" />
     <None Include="Resources\if_58_Cross_Circle_Remove_Delete_1864217.png" />
     <None Include="Resources\if_67_Arrow_Up_Direction_Wayfinding_Upload_1864216.png" />
     <None Include="Resources\if_67_Arrow_Up_Direction_Wayfinding_Down_1864216.png" />
