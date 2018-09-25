@@ -10,6 +10,7 @@ DisableReadyPage=yes
 UninstallDisplayIcon={app}\ElasticSearchManager.exe
 OutputBaseFilename=ElasticSearchManagerSetup
 AppID=ElasticSearchManager.1
+VersionInfoVersion=0.4
 
 [Files]
 Source: "..\bin\release\ElasticSearchManager.exe"; DestDir: "{app}"
