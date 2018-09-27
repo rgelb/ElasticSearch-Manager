@@ -329,8 +329,7 @@ namespace ElasticSearchManager {
                 return;
             }
 
-            var dialogResult = MessageBox.Show($"Deleting {grdEntities.SelectedRows.Count} {selectedType.ToString()}!!! Are you sure?  There is no going back!", "Destructive Action Ahead",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult dialogResult = AskPermissionToDelete(selectedType);
 
             if (dialogResult == DialogResult.Yes) {
 
@@ -338,19 +337,69 @@ namespace ElasticSearchManager {
 
                     switch (selectedType) {
                         case EntityType.Index:
-                        var entityIndex = (CatIndicesRecord)row.DataBoundItem;
-                        access.DeleteIndex(entityIndex);
-                        break;
+                            var entityIndex = (CatIndicesRecord)row.DataBoundItem;
+                            access.DeleteIndex(entityIndex);
+                            break;
                         case EntityType.Alias:
-                        var entityAlias = (CatAliasesRecord)row.DataBoundItem;
-                        access.DeleteAlias(entityAlias);
-                        break;
+                            var entityAlias = (CatAliasesRecord)row.DataBoundItem;
+                            access.DeleteAlias(entityAlias);
+                            break;
                     }
                 }
 
                 // recreate the grid
                 treeIndexes_AfterSelect(sender, null);
             }
+        }
+
+        private DialogResult AskPermissionToDelete(EntityType selectedType) {
+            // get a preview of what's about to be deleted
+            var itemsToBeDeleted = new List<string>();
+            bool aliasPointsToIndexWarn = false;
+            foreach (DataGridViewRow row in grdEntities.SelectedRows) {
+                switch (selectedType) {
+                    case EntityType.Index:
+                        var entityIndex = (CatIndicesRecord)row.DataBoundItem;
+                        itemsToBeDeleted.Add(entityIndex.Index);
+                        break;
+                    case EntityType.Alias:
+                        var entityAlias = (CatAliasesRecord)row.DataBoundItem;
+                        itemsToBeDeleted.Add(entityAlias.Alias);
+                        break;
+                }
+            }
+
+            var indexesPointedToByAlias = new List<string>();
+            if (selectedType == EntityType.Index) {
+                // check to see if any alias points to it.
+                TreeNode foundNode = treeEntities.Nodes.FindByFullPath("Aliases");
+                foreach (TreeNode aliasNode in foundNode.Nodes) {
+                    var alias = (CatAliasesRecord)aliasNode.Tag;
+
+                    if (itemsToBeDeleted.Contains(alias.Index)) {
+                        indexesPointedToByAlias.Add(alias.Index);
+                        aliasPointsToIndexWarn = true;
+                    }
+                }
+            }
+
+            string msg = $"{grdEntities.SelectedRows.Count} {selectedType.ToString()} are to be deleted!!! Are you sure?  There is no going back!";
+
+            foreach(var item in itemsToBeDeleted) {
+                msg += Environment.NewLine + "\t" + item;
+            }
+
+            if (aliasPointsToIndexWarn) {
+                msg += Environment.NewLine + Environment.NewLine;
+                if (indexesPointedToByAlias.Count == 1) {
+                    msg += $"In addition, index {indexesPointedToByAlias[0]} is pointed to by an alias";
+                } else {
+                    msg += $"In addition, indexes {string.Join(", ", indexesPointedToByAlias)} are pointed to by an aliases";
+                }
+            }
+
+            var dialogResult = MessageBox.Show(msg, "Destructive Action Ahead", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            return dialogResult;
         }
 
         private EntityType GetEntityType() {
