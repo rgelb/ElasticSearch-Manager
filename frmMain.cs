@@ -231,6 +231,14 @@ namespace ElasticSearchManager {
             if (indexDef.Settings != null) {
                 description += "Replicas: " + indexDef.Settings.NumberOfReplicas + Environment.NewLine;
                 description += "Shards: " + indexDef.Settings.NumberOfShards + Environment.NewLine;
+
+                const string CREATED_ON = "index.creation_date";
+                if (indexDef.Settings.ContainsKey(CREATED_ON)) {
+                    double milliseconds;
+                    if (double.TryParse(indexDef.Settings[CREATED_ON].ToString(), out milliseconds)) {
+                        description += "Created On: " + UnixTimeStampToDateTime(milliseconds).ToString() + Environment.NewLine;
+                    }
+                }
             }
 
             // fields
@@ -247,6 +255,13 @@ namespace ElasticSearchManager {
             }
 
             textEditor.Editor.Text = description;
+        }
+
+        private DateTime UnixTimeStampToDateTime(double unixTimeStamp) {
+            // Unix timestamp is milliseconds past epoch
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
         }
 
         private void PopulateGrid() {
@@ -348,6 +363,7 @@ namespace ElasticSearchManager {
                 }
 
                 // recreate the grid
+                RefreshSidebar();
                 treeIndexes_AfterSelect(sender, null);
             }
         }

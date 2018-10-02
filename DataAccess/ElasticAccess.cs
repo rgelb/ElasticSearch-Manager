@@ -67,6 +67,7 @@ namespace ElasticSearchManager.DataAccess {
         public bool DeleteAlias(CatAliasesRecord alias) {
             IBulkAliasResponse aliasResponse = client.Alias(a => a.Remove(r => r.Index(alias.Index).Alias(alias.Alias)));
             return aliasResponse.Acknowledged;
+
         }
     }
 }
