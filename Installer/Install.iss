@@ -11,6 +11,7 @@ UninstallDisplayIcon={app}\ElasticSearchManager.exe
 OutputBaseFilename=ElasticSearchManagerSetup
 AppID=ElasticSearchManager.1
 VersionInfoVersion=0.4
+PrivilegesRequired=lowest
 
 [Files]
 Source: "..\bin\debug\ElasticSearchManager.exe"; DestDir: "{app}"
@@ -24,3 +25,10 @@ Name: "{group}\Elastic Search Manager"; Filename: "{app}\ElasticSearchManager.ex
 
 [Run]
 Filename: "{app}\ElasticSearchManager.exe"; Description: "Launch Elastic Search Manager"; Flags: postinstall nowait skipifsilent
+
+; rename the uninstaller to avoid tripping windows security
+; unfortunately doesn't work because in the Apps & Features, the uninstaller is still being kicked off with privilige elevation
+; Filename: {cmd}; Parameters: "/C Move ""{app}\unins000.exe"" ""{app}\RemoveElasticSearchManager.exe"""; StatusMsg: Installing Elastic Search Manager...; Flags: RunHidden WaitUntilTerminated
+; Filename: {cmd}; Parameters: "/C Move ""{app}\unins000.dat"" ""{app}\RemoveElasticSearchManager.dat"""; StatusMsg: Installing Elastic Search Manager...; Flags: RunHidden WaitUntilTerminated
+; Filename: REG.exe; Parameters: "ADD ""HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ElasticSearchManager.1_is1"" /V ""UninstallString""      /T ""REG_SZ"" /D ""\""{app}\RemoveElasticSearchManager.exe\"""" /F"; StatusMsg: Installing Elastic Search Manager...; Flags: RunHidden WaitUntilTerminated
+; Filename: REG.exe; Parameters: "ADD ""HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ElasticSearchManager.1_is1"" /V ""QuietUninstallString"" /T ""REG_SZ"" /D ""\""{app}\RemoveElasticSearchManager.exe\"" /SILENT"" /F"; StatusMsg: Installing Elastic Search Manager...; Flags: RunHidden WaitUntilTerminated
