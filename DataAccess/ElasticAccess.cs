@@ -43,6 +43,13 @@ namespace ElasticSearchManager.DataAccess {
             return indexDef;
         }
 
+        public IIndicesStatsResponse IndexStats(string name) {
+
+            var indices = Nest.Indices.Index(name);
+            var request = new IndicesStatsRequest(indices);
+            return client.IndicesStats(request);
+        }
+
         public class IndexDefinition {
             public string Name { get; set; }
             public IGetIndexResponse Index { get; set; }

@@ -186,8 +186,9 @@ namespace ElasticSearchManager {
                     var indexRecord = (CatIndicesRecord) treeEntities.SelectedNode.Tag;
 
                     using (var access = GetElasticAccess()) {
+                        var indexStats = access.IndexStats(indexRecord.Index);
                         var indexDescription = access.IndexDescription(indexRecord.Index);
-                        PopulateIndexDescription(indexDescription);
+                        PopulateIndexDescription(indexDescription, indexStats);
                     }
 
                     break;
@@ -202,7 +203,7 @@ namespace ElasticSearchManager {
             }            
         }
 
-        private void PopulateIndexDescription(ElasticAccess.IndexDefinition indexDef) {
+        private void PopulateIndexDescription(ElasticAccess.IndexDefinition indexDef, IIndicesStatsResponse indexStats) {
             string description = string.Empty;
 
 
@@ -253,6 +254,19 @@ namespace ElasticSearchManager {
                 description += Environment.NewLine + "Fields" + Environment.NewLine;
                 description += fields + Environment.NewLine;
             }
+
+            // stats
+            description += Environment.NewLine + "Statistics" + Environment.NewLine;
+            if (indexStats?.Stats?.Total?.Store != null) {                
+                description += "Size: " + Utilities.SizeSuffix( (long) indexStats.Stats.Total.Store.SizeInBytes) + Environment.NewLine;
+            }
+
+
+            if (indexStats?.Stats?.Total?.Documents != null) {
+                description += "Documents: " + $"{indexStats.Stats.Total.Documents.Count:N0}" + Environment.NewLine;
+                description += "Deleted: " + $"{indexStats.Stats.Total.Documents.Deleted:N0}" + Environment.NewLine;
+            }
+                
 
             textEditor.Editor.Text = description;
         }
