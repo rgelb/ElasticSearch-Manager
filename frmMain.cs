@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using AutoMapper;
 using ElasticSearchManager.Common;
 using ElasticSearchManager.DataAccess;
 using Nest;
@@ -46,6 +47,7 @@ namespace ElasticSearchManager {
         #region Events
 
         private void frmMain_Load(object sender, EventArgs e) {
+            SetupInfractructure();
             PopulateConnections();
             InitializeUserSettings();
             InitializeTextEditor();
@@ -90,6 +92,23 @@ namespace ElasticSearchManager {
             appSplitContainer.SplitterDistance = Properties.Settings.Default.SplitterDistance;
         }
 
+        private void SetupInfractructure() {
+
+            Mapper.Initialize(cfg => {
+
+                cfg.CreateMap<CatAliasesRecord, ElasticAlias>();
+                cfg.CreateMap<CatIndicesRecord, ElasticIndex>();
+            });
+
+            //Mapper.Initialize(cfg =>
+            //    cfg.CreateMap<CatAliasesRecord, ElasticAlias>();
+            //    cfg.CreateMap<CatIndicesRecord, ElasticIndex>();
+
+            //);
+            //Mapper.Initialize(cfg => cfg.CreateMap<CatIndicesRecord, ElasticIndex>());
+
+        }
+
         private void PopulateConnections()
         {
             cboConnections.ComboBox.ValueMember = "ConnectionString";
@@ -111,11 +130,24 @@ namespace ElasticSearchManager {
             using (var access = GetElasticAccess()) {
                 ClearTree();
 
-                ICatResponse<CatIndicesRecord> indexList = access.IndexList();
+                List<ElasticIndex> indexList = ElasticIndex.ToList(access.IndexList());
                 RenderIndexes(indexList);
 
-                ICatResponse<CatAliasesRecord> aliasList = access.AliasList();
+                List<ElasticAlias> aliasList = ElasticAlias.ToList(access.AliasList());
                 RenderAliases(aliasList);
+
+                // apply aliases to indexes
+                ApplyAliasesToIndexes(indexList, aliasList);
+            }
+        }
+
+        private void ApplyAliasesToIndexes(List<ElasticIndex> indexList, List<ElasticAlias> aliasList) {
+            foreach (var alias in aliasList) {
+                // look for the index
+                var index = indexList.SingleOrDefault(i => i.Index == alias.Index);
+                if (index != null) {
+                    index.Alias = alias.Alias;
+                }
             }
         }
 
@@ -128,10 +160,10 @@ namespace ElasticSearchManager {
             treeEntities.Nodes.Clear();
         }
 
-        private void RenderIndexes(ICatResponse<CatIndicesRecord> indexList) {
+        private void RenderIndexes(List<ElasticIndex> indexList) {
             var parentNode = treeEntities.Nodes.Add("Indexes");
 
-            var records = indexList.Records.OrderBy(r => r.Index).ToList();
+            var records = indexList.OrderBy(r => r.Index).ToList();
             parentNode.Tag = records;
 
             foreach (var record in records) {
@@ -145,10 +177,10 @@ namespace ElasticSearchManager {
             }
         }
 
-        private void RenderAliases(ICatResponse<CatAliasesRecord> aliasList) {
+        private void RenderAliases(List<ElasticAlias> aliasList) {
             var parentNode = treeEntities.Nodes.Add("Aliases");
             
-            var aliases = aliasList.Records.OrderBy(r => r.Alias).ToList();
+            var aliases = aliasList.OrderBy(r => r.Alias).ToList();
             parentNode.Tag = aliases;
 
             foreach (var alias in aliases) {
@@ -193,7 +225,7 @@ namespace ElasticSearchManager {
 
                     break;
                 case EntityType.Alias:
-                    var aliasRecord = (CatAliasesRecord) treeEntities.SelectedNode.Tag;
+                    var aliasRecord = (ElasticAlias) treeEntities.SelectedNode.Tag;
                     break;
                 case EntityType.Unknown:
                     MessageBox.Show("Select either Indexes or Aliases on the left");
@@ -328,23 +360,23 @@ namespace ElasticSearchManager {
 
         private void PopulateIndexGrid() {
             TreeNode node = treeEntities.SelectedNode;
-            var indexes = (List<CatIndicesRecord>) node.Tag;
+            var indexes = (List<ElasticIndex>) node.Tag;
 
             string filter = txtToolbarSearch.Text;
-            List<CatIndicesRecord> filtered = string.IsNullOrWhiteSpace(filter) ? indexes : indexes.Where(idx => idx.Index.Contains(filter)).ToList();
+            List<ElasticIndex> filtered = string.IsNullOrWhiteSpace(filter) ? indexes : indexes.Where(idx => idx.Index.Contains(filter)).ToList();
                 
-            var source = new SortableBindingList<CatIndicesRecord>(filtered);
+            var source = new SortableBindingList<ElasticIndex>(filtered);
             grdEntities.DataSource = source;
         }
 
         private void PopulateAliasGrid() {
             TreeNode node = treeEntities.SelectedNode;
-            var aliases = (List<CatAliasesRecord>) node.Tag;
+            var aliases = (List<ElasticAlias>) node.Tag;
 
             string filter = txtToolbarSearch.Text;
-            List<CatAliasesRecord> filtered = string.IsNullOrWhiteSpace(filter) ? aliases : aliases.Where(idx => idx.Alias.Contains(filter)).ToList();
+            List<ElasticAlias> filtered = string.IsNullOrWhiteSpace(filter) ? aliases : aliases.Where(idx => idx.Alias.Contains(filter)).ToList();
                 
-            var source = new SortableBindingList<CatAliasesRecord>(filtered);
+            var source = new SortableBindingList<ElasticAlias>(filtered);
             grdEntities.DataSource = source;
         }
 
@@ -370,7 +402,7 @@ namespace ElasticSearchManager {
                             access.DeleteIndex(entityIndex);
                             break;
                         case EntityType.Alias:
-                            var entityAlias = (CatAliasesRecord)row.DataBoundItem;
+                            var entityAlias = (ElasticAlias)row.DataBoundItem;
                             access.DeleteAlias(entityAlias);
                             break;
                     }
@@ -393,7 +425,7 @@ namespace ElasticSearchManager {
                         itemsToBeDeleted.Add(entityIndex.Index);
                         break;
                     case EntityType.Alias:
-                        var entityAlias = (CatAliasesRecord)row.DataBoundItem;
+                        var entityAlias = (ElasticAlias)row.DataBoundItem;
                         itemsToBeDeleted.Add(entityAlias.Alias);
                         break;
                 }
@@ -404,7 +436,7 @@ namespace ElasticSearchManager {
                 // check to see if any alias points to it.
                 TreeNode foundNode = treeEntities.Nodes.FindByFullPath("Aliases");
                 foreach (TreeNode aliasNode in foundNode.Nodes) {
-                    var alias = (CatAliasesRecord)aliasNode.Tag;
+                    var alias = (ElasticAlias)aliasNode.Tag;
 
                     if (itemsToBeDeleted.Contains(alias.Index)) {
                         indexesPointedToByAlias.Add(alias.Index);
@@ -450,7 +482,7 @@ namespace ElasticSearchManager {
                 object o = treeEntities.SelectedNode.Tag;
                 if (o is CatIndicesRecord) {
                     return EntityType.Index;
-                } else if (o is CatAliasesRecord) {
+                } else if (o is ElasticAlias) {
                     return EntityType.Alias;
                 }
             }

@@ -39,6 +39,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=8.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>packages\AutoMapper.8.1.1\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Elasticsearch.Net, Version=6.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
       <HintPath>packages\Elasticsearch.Net.6.3.1\lib\net461\Elasticsearch.Net.dll</HintPath>
     </Reference>
@@ -72,6 +75,8 @@
     <Compile Include="DataAccess\ElasticAccess.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="DataAccess\Database.cs" />
+    <Compile Include="Entities\ElasticAlias.cs" />
+    <Compile Include="Entities\ElasticIndex.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,8 +131,6 @@
     <None Include="Resources\if_52_Circled_Arrow_Left_Circle_Direcrion_1864219.png" />
     <None Include="Resources\if_89_Import_Down_Download_Save_1864210.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Entities\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
