@@ -1,7 +1,7 @@
 [Setup]
 AppName=Elastic Search Manager
 AppVerName=ElasticSearchManager
-AppCopyright=Copyright (C) 2018 Robert Gelb
+AppCopyright=Copyright (C) 2019 Robert Gelb
 AppPublisher=Robert Gelb
 DefaultDirName={userpf}\ElasticSearchManager
 DisableDirPage=yes
@@ -10,7 +10,7 @@ DisableReadyPage=yes
 UninstallDisplayIcon={app}\ElasticSearchManager.exe
 OutputBaseFilename=ElasticSearchManagerSetup
 AppID=ElasticSearchManager.1
-VersionInfoVersion=0.4
+VersionInfoVersion=0.5
 PrivilegesRequired=lowest
 
 [Files]
@@ -19,6 +19,8 @@ Source: "CleanFiles\ElasticSearchManager.exe.config"; DestDir: "{app}"
 Source: "..\bin\debug\ScintillaNET.dll"; DestDir: "{app}"
 Source: "..\bin\debug\Elasticsearch.Net.dll"; DestDir: "{app}"
 Source: "..\bin\debug\Nest.dll"; DestDir: "{app}"
+Source: "..\bin\debug\Automapper.dll"; DestDir: "{app}"
+Source: "..\bin\debug\Newtonsoft.Json.dll"; DestDir: "{app}"
 
 [Icons]
 Name: "{group}\Elastic Search Manager"; Filename: "{app}\ElasticSearchManager.exe"; 
