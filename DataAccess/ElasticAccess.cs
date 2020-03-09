@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Elasticsearch.Net;
 using Nest;
+using Newtonsoft.Json;
 
 namespace ElasticSearchManager.DataAccess {
     public class ElasticAccess: IDisposable {
@@ -23,6 +24,33 @@ namespace ElasticSearchManager.DataAccess {
         public ICatResponse<CatIndicesRecord> IndexList() {
             var request = new CatIndicesRequest();
             return client.CatIndices(request);
+        } 
+
+        // same as IndexList, but with SegmentCount added
+        public List<CatIndicesRecordExtended> IndexListExtended()
+        {
+            var requestParams = new CatIndicesRequestParameters
+            {
+                Format = "json",
+                Headers = new string[]
+                {
+                    "health",
+                    "status",
+                    "index",
+                    "creation.date.string",
+                    "uuid",
+                    "pri",
+                    "rep",
+                    "docs.count",
+                    "docs.deleted",
+                    "store.size",
+                    "pri.store.size",
+                    "segments.count"
+                }
+            };
+
+            var response = client.LowLevel.CatIndices<StringResponse>(requestParams);
+            return JsonConvert.DeserializeObject<List<CatIndicesRecordExtended>>(response.Body);
         }
 
         public IndexDefinition IndexDescription(string name) {
@@ -41,6 +69,12 @@ namespace ElasticSearchManager.DataAccess {
             //try { indexDef.Mappings = client.GetMapping<object>(i => i.Index(name).AllTypes()); } catch (Exception ex) { Debug.WriteLine(ex.Message); }    // ignore exception
 
             return indexDef;
+        }
+
+        public CatSegmentsDescriptor Segments()
+        {
+            var request = new CatSegmentsDescriptor();
+            return request.AllIndices();
         }
 
         public IIndicesStatsResponse IndexStats(string name) {
@@ -76,5 +110,33 @@ namespace ElasticSearchManager.DataAccess {
             return aliasResponse.Acknowledged;
 
         }
+    }
+
+    public class CatIndicesRecordExtended //: CatIndicesRecord
+    {
+        [JsonProperty("docs.count")]
+        public string DocsCount { get; set; }
+        [JsonProperty("docs.deleted")]
+        public string DocsDeleted { get; set; }
+        [JsonProperty("health")]
+        public string Health { get; set; }
+        [JsonProperty("index")]
+        public string Index { get; set; }
+        [JsonProperty("pri")]
+        public string Primary { get; set; }
+        [JsonProperty("pri.store.size")]
+        public string PrimaryStoreSize { get; set; }
+        [JsonProperty("rep")]
+        public string Replica { get; set; }
+        [JsonProperty("status")]
+        public string Status { get; set; }
+        [JsonProperty("store.size")]
+        public string StoreSize { get; set; }
+        [JsonProperty("memory.total ")]
+        public string TotalMemory { get; set; }
+        [JsonProperty("creation.date.string")]
+        public string CreationDate { get; set; }
+        [JsonProperty("segments.count")]
+        public int SegmentCount { get; set; }
     }
 }

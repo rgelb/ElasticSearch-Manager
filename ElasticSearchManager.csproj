@@ -74,7 +74,6 @@
     <Compile Include="Common\SortableBindingList.cs" />
     <Compile Include="DataAccess\ElasticAccess.cs" />
     <Compile Include="Common\Constants.cs" />
-    <Compile Include="DataAccess\Database.cs" />
     <Compile Include="Entities\ElasticAlias.cs" />
     <Compile Include="Entities\ElasticIndex.cs" />
     <Compile Include="frmMain.cs">
@@ -87,7 +86,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\Support.cs" />
     <Compile Include="Controls\TextEditor.cs" />
-    <Compile Include="DataAccess\TrioAccess.cs" />
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -101,6 +99,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include=".editorconfig" />
     <None Include="app.manifest" />
     <None Include="Installer\CleanFiles\ElasticSearchManager.exe.config" />
     <None Include="packages.config" />

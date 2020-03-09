@@ -95,17 +95,10 @@ namespace ElasticSearchManager {
         private void SetupInfractructure() {
 
             Mapper.Initialize(cfg => {
-
-                cfg.CreateMap<CatAliasesRecord, ElasticAlias>();
-                cfg.CreateMap<CatIndicesRecord, ElasticIndex>();
+                _ = cfg.CreateMap<CatAliasesRecord, ElasticAlias>();
+                _ = cfg.CreateMap<CatIndicesRecord, ElasticIndex>();
+                _ = cfg.CreateMap<CatIndicesRecordExtended, ElasticIndex>();
             });
-
-            //Mapper.Initialize(cfg =>
-            //    cfg.CreateMap<CatAliasesRecord, ElasticAlias>();
-            //    cfg.CreateMap<CatIndicesRecord, ElasticIndex>();
-
-            //);
-            //Mapper.Initialize(cfg => cfg.CreateMap<CatIndicesRecord, ElasticIndex>());
 
         }
 
@@ -130,7 +123,8 @@ namespace ElasticSearchManager {
             using (var access = GetElasticAccess()) {
                 ClearTree();
 
-                List<ElasticIndex> indexList = ElasticIndex.ToList(access.IndexList());
+                List<ElasticIndex> indexList = ElasticIndex.ToList(access.IndexListExtended());
+                //List<ElasticIndex> indexList = ElasticIndex.ToList(access.IndexList());
                 RenderIndexes(indexList);
 
                 List<ElasticAlias> aliasList = ElasticAlias.ToList(access.AliasList());
@@ -367,6 +361,20 @@ namespace ElasticSearchManager {
                 
             var source = new SortableBindingList<ElasticIndex>(filtered);
             grdEntities.DataSource = source;
+
+            // set order of columns
+            grdEntities.Columns["Index"].DisplayIndex = 0;
+            grdEntities.Columns["Alias"].DisplayIndex = 1;
+            grdEntities.Columns["DocsCount"].DisplayIndex = 2;
+            grdEntities.Columns["DocsDeleted"].DisplayIndex = 3;
+            grdEntities.Columns["Primary"].DisplayIndex = 4;
+            grdEntities.Columns["Replica"].DisplayIndex = 5;
+            grdEntities.Columns["SegmentCount"].DisplayIndex = 6;
+            grdEntities.Columns["PrimaryStoreSize"].DisplayIndex = 7;
+            grdEntities.Columns["StoreSize"].DisplayIndex = 8;
+            grdEntities.Columns["Health"].DisplayIndex = 9;
+            grdEntities.Columns["Status"].DisplayIndex = 10;
+            grdEntities.Columns["TotalMemory"].DisplayIndex = 11;
         }
 
         private void PopulateAliasGrid() {
@@ -500,6 +508,25 @@ namespace ElasticSearchManager {
 
         private void btnRefresh_Click(object sender, EventArgs e) {
             RefreshSidebar();
+        }
+
+        private void grdEntities_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
+            // add a tooltip for indexes that include a Ticks based creation timestamp
+            // example: school_637034229424498988
+            if (grdEntities.Columns.Contains("Index") && e.ColumnIndex == grdEntities.Columns["Index"].Index) {
+                DataGridViewCell cell = grdEntities.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                string text = (string) cell.Value;
+
+                int pos = text.LastIndexOf('_');
+                if (pos > 0) {
+                    string ticks = text.Substring(pos + 1);
+                    if (ticks.Length == 18 && long.TryParse(ticks, out long ticksValue)) {
+                        cell.ToolTipText = new DateTime(ticksValue).ToString();
+                    }
+                }
+
+            }
+
         }
 
         private void RefreshSidebar() {
