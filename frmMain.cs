@@ -49,8 +49,8 @@ namespace ElasticSearchManager {
         private void frmMain_Load(object sender, EventArgs e) {
             SetupInfractructure();
             PopulateConnections();
-            InitializeUserSettings();
             InitializeTextEditor();
+            InitializeUserSettings();            
             InitilizeMiscUI();    
             DisplayContentControl(ContentType.Grid);
         }
@@ -58,6 +58,7 @@ namespace ElasticSearchManager {
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e) {
             Properties.Settings.Default.LastConnection = cboConnections.Text;
             Properties.Settings.Default.SplitterDistance = appSplitContainer.SplitterDistance;
+            Properties.Settings.Default.WindowState = this.WindowState;
             Properties.Settings.Default.Save();
         }
 
@@ -89,6 +90,7 @@ namespace ElasticSearchManager {
                 cboConnections.Text = Properties.Settings.Default.LastConnection;
             }
 
+            this.WindowState = Properties.Settings.Default.WindowState;
             appSplitContainer.SplitterDistance = Properties.Settings.Default.SplitterDistance;
         }
 
@@ -363,8 +365,8 @@ namespace ElasticSearchManager {
             grdEntities.DataSource = source;
 
             // set order of columns
-            grdEntities.Columns["Index"].DisplayIndex = 0;
-            grdEntities.Columns["Alias"].DisplayIndex = 1;
+            grdEntities.Columns["Alias"].DisplayIndex = 0;
+            grdEntities.Columns["Index"].DisplayIndex = 1;
             grdEntities.Columns["DocsCount"].DisplayIndex = 2;
             grdEntities.Columns["DocsDeleted"].DisplayIndex = 3;
             grdEntities.Columns["Primary"].DisplayIndex = 4;
