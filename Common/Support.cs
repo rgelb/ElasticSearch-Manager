@@ -134,6 +134,17 @@ namespace ElasticSearchManager
             return string.Format("{0:n" + decimalPlaces + "} {1}", dValue, SizeSuffixes[i]);
         }
 
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp) {
+            // Unix timestamp is milliseconds past epoch
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
+
+        public static double NanosecondsToMilliseconds(double nanoseconds) {
+            return nanoseconds * 0.000001;
+        }
+
     }
 		
 
@@ -352,41 +363,4 @@ namespace ElasticSearchManager
 		}	
 	}
 
-    /// <summary>
-    /// A simple class to benchmark performance
-    /// </summary>
-	public class Benchmark
-	{
-		private int startTime;
-		public Benchmark()
-		{
-			startTime = Environment.TickCount;	
-		}
-
-		public string Elapsed
-		{
-			get
-			{
-				return ((float)(Environment.TickCount - startTime) / 1000 ).ToString();
-			}
-		}
-
-		public float ElapsedFloat
-		{
-			get
-			{
-				return (float)(Environment.TickCount - startTime) / 1000;
-			}
-		}
-
-		public string PerSecond(int ItemCount)
-		{
-			return PerSecondFloat(ItemCount).ToString();
-		}
-		public float PerSecondFloat(int ItemCount)
-		{
-			return Convert.ToSingle(ItemCount) / this.ElapsedFloat;			
-		}
-
-	}
 }

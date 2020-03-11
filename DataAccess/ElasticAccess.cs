@@ -110,6 +110,15 @@ namespace ElasticSearchManager.DataAccess {
             return aliasResponse.Acknowledged;
 
         }
+
+        public IListTasksResponse TaskList()
+        {
+            var request = new ListTasksRequest();
+            var response = client.ListTasks(request);
+
+            return response;
+        }
+
     }
 
     public class CatIndicesRecordExtended //: CatIndicesRecord

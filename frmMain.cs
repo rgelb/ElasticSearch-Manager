@@ -23,6 +23,7 @@ namespace ElasticSearchManager {
         private enum EntityType {
             Index,
             Alias,
+            Task,
             Unknown,
             NotSelected
         }
@@ -82,7 +83,7 @@ namespace ElasticSearchManager {
         }
 
         private void InitilizeMiscUI() {
-            NativeMethods.SetToolstripTextBoxPlaceHolder(txtToolbarSearch, "Filter Entities");            
+            NativeMethods.SetToolstripTextBoxPlaceHolder(txtToolbarSearch, "Filter Entities");
         }
 
         private void InitializeUserSettings() {
@@ -100,6 +101,7 @@ namespace ElasticSearchManager {
                 _ = cfg.CreateMap<CatAliasesRecord, ElasticAlias>();
                 _ = cfg.CreateMap<CatIndicesRecord, ElasticIndex>();
                 _ = cfg.CreateMap<CatIndicesRecordExtended, ElasticIndex>();
+                _ = cfg.CreateMap<TaskState, ElasticTask>();
             });
 
         }
@@ -134,6 +136,10 @@ namespace ElasticSearchManager {
 
                 // apply aliases to indexes
                 ApplyAliasesToIndexes(indexList, aliasList);
+
+                // add a Tasks node
+                var parentNode = treeEntities.Nodes.Add("Tasks");
+
             }
         }
 
@@ -193,7 +199,7 @@ namespace ElasticSearchManager {
                 Cursor.Current = Cursors.WaitCursor;
 
                 if (node.Level == 0) {
-                    // list of indexes or aliases
+                    // list of indexes or aliases or tasks
                     PopulateGrid();
                     DisplayContentControl(ContentType.Grid);
                 }
@@ -234,16 +240,6 @@ namespace ElasticSearchManager {
         private void PopulateIndexDescription(ElasticAccess.IndexDefinition indexDef, IIndicesStatsResponse indexStats) {
             string description = string.Empty;
 
-
-            //if (indexDef.Index.Indices.Count == 0) {
-            //    textEditor.Editor.Text = "Index not found";
-            //    return;
-            //}
-
-            //var index = indexDef.Indices.FirstOrDefault();
-            //var indexState = index.Value;
-
-
             // get names and aliases
             if (indexDef.Index != null) {
                 var index = indexDef.Index.Indices.FirstOrDefault();
@@ -265,7 +261,7 @@ namespace ElasticSearchManager {
                 if (indexDef.Settings.ContainsKey(CREATED_ON)) {
                     double milliseconds;
                     if (double.TryParse(indexDef.Settings[CREATED_ON].ToString(), out milliseconds)) {
-                        description += "Created On: " + UnixTimeStampToDateTime(milliseconds).ToString() + Environment.NewLine;
+                        description += "Created On: " + Utilities.UnixTimeStampToDateTime(milliseconds).ToString() + Environment.NewLine;
                     }
                 }
             }
@@ -295,16 +291,9 @@ namespace ElasticSearchManager {
                 description += "Deleted: " + $"{indexStats.Stats.Total.Documents.Deleted:N0}" + Environment.NewLine;
             }
                 
-
             textEditor.Editor.Text = description;
         }
 
-        private DateTime UnixTimeStampToDateTime(double unixTimeStamp) {
-            // Unix timestamp is milliseconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
 
         private void PopulateGrid() {
 
@@ -317,6 +306,9 @@ namespace ElasticSearchManager {
                     break;
                 case EntityType.Alias:
                     PopulateAliasGrid();
+                    break;
+                case EntityType.Task:
+                    PopulateTaskGrid();
                     break;
                 case EntityType.Unknown:
                     MessageBox.Show("Select either Indexes or Aliases on the left");
@@ -390,6 +382,28 @@ namespace ElasticSearchManager {
             grdEntities.DataSource = source;
         }
 
+        private void PopulateTaskGrid()
+        {
+            using (var access = GetElasticAccess())
+            {
+                var tasks = ElasticTask.ToList(access.TaskList());
+
+                string filter = txtToolbarSearch.Text;
+                List<ElasticTask> filtered = string.IsNullOrWhiteSpace(filter) ? tasks : tasks.Where(idx => idx.Action.Contains(filter)).ToList();
+
+                var source = new SortableBindingList<ElasticTask>(filtered);
+                grdEntities.DataSource = source;
+
+                grdEntities.Columns["RunningTimeInNanoSeconds"].Visible = false;
+                grdEntities.Columns["StartTimeInMilliseconds"].Visible = false;
+                grdEntities.Columns["Description"].Visible = false;
+                grdEntities.Columns["Headers"].Visible = false;
+                grdEntities.Columns["Status"].Visible = false;
+                grdEntities.Columns["Node"].Visible = false;
+                //grdEntities.Columns["RunningTimeInNanoSeconds"].Visible = false;
+            }
+
+        }
 
         private void btnDelete_Click(object sender, EventArgs e) {
             ElasticAccess access = GetElasticAccess();
@@ -397,6 +411,11 @@ namespace ElasticSearchManager {
 
             if (selectedType == EntityType.Unknown) {
                 MessageBox.Show("Select either Aliases and Indexes in the tree");
+                return;
+            }
+
+            if (selectedType == EntityType.Task) {
+                MessageBox.Show("Deleting a task is not working right now...  check back later");
                 return;
             }
 
@@ -487,6 +506,8 @@ namespace ElasticSearchManager {
                     entityType = EntityType.Index;
                 } else if (treeEntities.SelectedNode.Text == "Aliases") {
                     entityType = EntityType.Alias;
+                } else if (treeEntities.SelectedNode.Text == "Tasks") { 
+                    entityType = EntityType.Task;
                 }
             } else if (treeEntities.SelectedNode.Level == 1) {
                 object o = treeEntities.SelectedNode.Tag;

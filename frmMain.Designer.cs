@@ -29,7 +29,7 @@ namespace ElasticSearchManager {
             this.lblAppStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.appSplitContainer = new System.Windows.Forms.SplitContainer();
             this.treeEntities = new System.Windows.Forms.TreeView();
-            this.grdEntities = new System.Windows.Forms.DataGridView();
+            this.grdEntities = new DoubleBufferedDataGridView();
             this.appToolbar = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.cboConnections = new System.Windows.Forms.ToolStripComboBox();
@@ -284,7 +284,7 @@ namespace ElasticSearchManager {
         private System.Windows.Forms.ToolStripTextBox txtToolbarSearch;
         private System.Windows.Forms.ToolStripButton btnToolbarSearch;
         private System.Windows.Forms.ToolStripLabel lbl;
-        private System.Windows.Forms.DataGridView grdEntities;
+        private DoubleBufferedDataGridView grdEntities;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;

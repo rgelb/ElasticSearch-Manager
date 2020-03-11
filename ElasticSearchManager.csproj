@@ -72,10 +72,14 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\NativeMethods.cs" />
     <Compile Include="Common\SortableBindingList.cs" />
+    <Compile Include="Controls\DoubleBufferedDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DataAccess\ElasticAccess.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Entities\ElasticAlias.cs" />
     <Compile Include="Entities\ElasticIndex.cs" />
+    <Compile Include="Entities\ElasticTask.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,7 +103,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include=".editorconfig" />
     <None Include="app.manifest" />
     <None Include="Installer\CleanFiles\ElasticSearchManager.exe.config" />
     <None Include="packages.config" />
