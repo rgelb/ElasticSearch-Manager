@@ -1,7 +1,7 @@
 [Setup]
 AppName=Elastic Search Manager
 AppVerName=ElasticSearchManager
-AppCopyright=Copyright (C) 2019-2020 Robert Gelb
+AppCopyright=Copyright (C) 2019-2021 Robert Gelb
 AppPublisher=Robert Gelb
 DefaultDirName={userpf}\ElasticSearchManager
 DisableDirPage=yes
@@ -10,7 +10,7 @@ DisableReadyPage=yes
 UninstallDisplayIcon={app}\ElasticSearchManager.exe
 OutputBaseFilename=ElasticSearchManagerSetup
 AppID=ElasticSearchManager.1
-VersionInfoVersion=0.7.1
+VersionInfoVersion=0.7.2
 PrivilegesRequired=lowest
 
 [Files]
