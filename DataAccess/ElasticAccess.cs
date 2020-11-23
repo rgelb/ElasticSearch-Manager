@@ -14,9 +14,20 @@ namespace ElasticSearchManager.DataAccess {
         private readonly ElasticClient client;
 
         public ElasticAccess(string connString) {
-            var pool = new StaticConnectionPool(connString.Split(',').Select(uri => new Uri(uri)));
+
+            var parts = connString.Split(';');
+            var urls = parts[0];
+
+            string userId = parts.Length == 3 ? parts[1].Split('=')[1] : string.Empty;
+            string password = parts.Length == 3 ? parts[2].Split('=')[1] : string.Empty;
+
+            var pool = new StaticConnectionPool(urls.Split(',').Select(uri => new Uri(uri)));
             var settings = new ConnectionSettings(pool);
             settings.DisableDirectStreaming();
+
+            if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(password)) {
+                settings = settings.BasicAuthentication(userId, password);
+            }
 
             client = new ElasticClient(settings);
         }
