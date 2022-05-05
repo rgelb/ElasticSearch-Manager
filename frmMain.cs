@@ -577,5 +577,9 @@ namespace ElasticSearchManager {
             }
 
         }
+
+        private void grdEntities_SortCompare(object sender, DataGridViewSortCompareEventArgs e) {
+            Debug.WriteLine(e.Column.Name);
+        }
     }
 }

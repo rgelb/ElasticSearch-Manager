@@ -65,12 +65,12 @@ namespace ElasticSearchManager {
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.appSplitContainer);
-            this.toolStripContainer1.ContentPanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.toolStripContainer1.ContentPanel.Margin = new System.Windows.Forms.Padding(2);
             this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1213, 555);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.LeftToolStripPanelVisible = false;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
-            this.toolStripContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.toolStripContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.toolStripContainer1.Name = "toolStripContainer1";
             this.toolStripContainer1.RightToolStripPanelVisible = false;
             this.toolStripContainer1.Size = new System.Drawing.Size(1213, 608);
@@ -102,7 +102,7 @@ namespace ElasticSearchManager {
             // 
             this.appSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.appSplitContainer.Location = new System.Drawing.Point(0, 0);
-            this.appSplitContainer.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.appSplitContainer.Margin = new System.Windows.Forms.Padding(2);
             this.appSplitContainer.Name = "appSplitContainer";
             // 
             // appSplitContainer.Panel1
@@ -122,7 +122,7 @@ namespace ElasticSearchManager {
             this.treeEntities.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeEntities.HideSelection = false;
             this.treeEntities.Location = new System.Drawing.Point(0, 0);
-            this.treeEntities.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.treeEntities.Margin = new System.Windows.Forms.Padding(2);
             this.treeEntities.Name = "treeEntities";
             this.treeEntities.Size = new System.Drawing.Size(329, 555);
             this.treeEntities.TabIndex = 0;
@@ -142,6 +142,7 @@ namespace ElasticSearchManager {
             this.grdEntities.Size = new System.Drawing.Size(352, 176);
             this.grdEntities.TabIndex = 0;
             this.grdEntities.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grdEntities_CellFormatting);
+            this.grdEntities.SortCompare += new System.Windows.Forms.DataGridViewSortCompareEventHandler(this.grdEntities_SortCompare);
             // 
             // appToolbar
             // 
@@ -245,7 +246,7 @@ namespace ElasticSearchManager {
             this.ClientSize = new System.Drawing.Size(1213, 608);
             this.Controls.Add(this.toolStripContainer1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "frmMain";
             this.Text = "Elastic Search Manager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);

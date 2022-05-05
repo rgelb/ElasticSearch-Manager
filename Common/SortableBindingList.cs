@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -102,7 +103,16 @@ namespace ElasticSearchManager.Common {
             }
 
             if (lhsValue is IComparable) {
-                return ((IComparable) lhsValue).CompareTo(rhsValue);
+
+                // if value is numeric sort it as that.  
+                if (long.TryParse(lhsValue.ToString(), out long lhsLong) && long.TryParse(rhsValue.ToString(), out long rhsLong)) {
+
+                    return ((IComparable)lhsLong).CompareTo(rhsLong);
+                } else {
+                    return ((IComparable)lhsValue).CompareTo(rhsValue);
+                }
+
+                
             }
 
             if (lhsValue.Equals(rhsValue)) {
